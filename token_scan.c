@@ -4,7 +4,8 @@
   结构体符号表
     
 **/
-
+#define LINE_SIZE 256;  //按行读取文件时，每行的最大长度byte
+#define FILEPATH "worldtable"
 
 typedef struct ITEM{
     char *alias;             //单词名称
@@ -21,6 +22,7 @@ typedef struct SYMBOL_TABLE{    //符号表
 int initial_symbol_table();    //初始化符号表：1成功；2失败
 
 int initial_symbol_table(FLLE *p){
-
-    
+    char *buf[LINE_SIZE];  
+    FILE *p = NULL;
+    p = fopen(FILEPATH,"r")
 }
