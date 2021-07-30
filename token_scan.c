@@ -11,13 +11,8 @@ typedef struct ITEM{
     char *alias;             //单词名称
     unsigned int type;          //单词类型
     unsigned int address;       //单词的值
-} ITEM;
-
-typedef struct SYMBOL_TABLE{    //符号表
-    struct ITEM  *prior;
-     ITEM  data;
-    struct ITEM *next; 
-}SYMBOL_TABLE;
+    struct ITEM ;
+} item, *linklist;
 
 
 int initial_symbol_table(){
@@ -30,19 +25,18 @@ int initial_symbol_table(){
             printf ("%s",buf);
         }
         fclose(p);
+        return 1;
     }else{
        printf("ERROR:open file failure!");
         return 0;
     }
 }
 
-int initial_List(){
-    
+int initial_List(char *buf, ITEM *L){
+         
 }
 
-int initial_Node(char *buf){    //从文件每行读取的内容初始化结点
-    while 
-}
+
 
 int initial_symbol_table(void);
 int main()
