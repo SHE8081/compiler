@@ -63,31 +63,6 @@ int initial_symbol_table(){
     return exit_status;
 }
 
-//ITEM * add_item(char *b, ITEM *l){      //读取每一行数据，初始化节点。传入以行缓存数据和连接头指针
-//   static char whitespace[] = " \t\f\r\v\n";
-//   char *token = NULL;
-//   int count=1;                         //符号表3列标记1-3 1:alias 2:type  3:address
-//   ITEM *newl = malloc(sizeof(ITEM));
-//   for ( token = strtok(b ,whitespace); token != NULL; token = strtok(NULL, whitespace))
-//    {
-//      switch(count){
-//      case 1:
-//            newl->alias = malloc((token+1)*sizeof(char));    //分配alias指向的空间
-//            for( ; token > 0；token--){                 //复制内容到alia指定的空间内
-//                newl->alias[token] = b[token];
-//            }
-//      case 2:
-//            newl->type = b[token]; 
-//      case 3:
-//            newl-type->address = 0;
-//      default : count = count + 1;
-//     }
-//    }
-//   newl->next = l->netx->next;                 //头部插入
-//   l->next = newl; 
-//   return l;                     //返回增加表项后的连表头地址
-//}
-//
 
 Rec *create_head_record(){
     Rec *h = (Rec *)malloc(sizeof(Rec));
@@ -109,7 +84,7 @@ Rec *create_head_record(){
 }
 
 
-Rec *creat_item_record(Rec *head, char *buf){       //head:链表的头指针; buf:文件的行指针
+Rec *create_item_record(Rec *head, char *buf){       //head:链表的头指针; buf:文件的行指针
     Rec *i = (Rec *)malloc(sizeof(Rec));
     unsigned int t = 0;                              //种别编码
     if(i != NULL)
@@ -145,10 +120,35 @@ void discard_rec(Rec *rec){                     //删除记录，释放空间
     free(rec);
 }
 
+void print_record(Rec *h)
+{
+    Rec *tmp;
+    if(head != NULL)
+    {
+        switch(h->type)
+        {
+            case HEAD:
+                printf("%s--%s--%s",h->info.head->name,head->info.head->type,head->info.head->address);
+                break;
+            case BODY:
+               tmp = head;
+               while (tmp->next != NULL)
+               {
+                    printf("%s--%c--%c",tmp->info.item->alias,tmp->info.item->type,tmp->info.item->address);
+                    tmp = tmp->next->next;
+               }
+               break;
+        }
+    }
+    printf("Record is empty!");
+    exit(1);
+}
 
 
 int initial_symbol_table();
+void print_record(Rec *);
 int main()
 {
     initial_symbol_table();
+    print_record(head);
 }
