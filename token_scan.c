@@ -33,7 +33,7 @@ typedef struct Rec_tag{
 Rec *head;                                              //声明链表头指针
 void discard_rec(Rec *);
 Rec *create_head_record(void);
-Rec *create_item_record(Rec *, char *);
+Rec *create_item_record(Rec *, char *,unsigned int);
 
 
 int initial_symbol_table(){
@@ -47,8 +47,11 @@ int initial_symbol_table(){
             head = create_head_record();
             
         }
+        unsigned int code = 1;
         while(fgets(buf,LINE_SIZE-1,p)!= NULL){         //生成链表内容
-            head = create_item_record(head, buf);        
+            
+            head = create_item_record(head, buf,code);
+            code ++ ;
         }
 
 
@@ -78,13 +81,14 @@ Rec *create_head_record(){
 
         }
         return h;
+    }else{
+        printf("Out of memory!");
+        return NULL;
     }
-     printf("Out of memory!");
-     return NULL;
 }
 
 
-Rec *create_item_record(Rec *head, char *buf){       //head:链表的头指针; buf:文件的行指针
+Rec *create_item_record(Rec *head, char *buf, unsigned int num){       //head:链表的头指针; buf:文件的行指针;num:种别编码
     Rec *i = (Rec *)malloc(sizeof(Rec));
     unsigned int t = 0;                              //种别编码
     if(i != NULL)
@@ -95,15 +99,18 @@ Rec *create_item_record(Rec *head, char *buf){       //head:链表的头指针; 
        {
         while((*i->info.item->alias++ = *buf++) != '\0')
         ;                                           //从buf中拷贝字符串直到/0到item->alias中
-        i->info.item->type = t++;
+        i->info.item->type = num;
         i->info.item->address = 0;                  //内码暂定为0
-       }
         i->next = head->next;                            //头部插入新结点    ;
         head->next = i;
         return head;
-      }
-    printf("Out of memory!");
-    return NULL;
+       }
+    }
+    else
+    {
+        printf("Out of memory!");
+        return NULL;
+    }
 }
 
 void discard_rec(Rec *rec){                     //删除记录，释放空间
@@ -139,9 +146,10 @@ void print_record(Rec *h)
                }
                break;
         }
+    }else{
+        printf("Record is empty!");
+        exit(1);
     }
-    printf("Record is empty!");
-    exit(1);
 }
 
 
@@ -150,5 +158,5 @@ void print_record(Rec *);
 int main()
 {
     initial_symbol_table();
-    print_record(head);
+    //print_record(head);
 }
