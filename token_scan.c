@@ -6,6 +6,7 @@
     
 **/
 #define LINE_SIZE 256   //按行读取文件时，每行的最大长度byte
+#define ALIAS_SIZE 20   //单词符号长度
 #define FILEPATH "./worldtable"
 
 typedef struct Item{
@@ -42,12 +43,9 @@ int initial_symbol_table(){
     FILE *p = NULL;
     p = fopen("wordtable","r");
     if(p != NULL){
-        if(fgets(buf,LINE_SIZE-1,p)!= NULL)             //生成链表节点
-        {
-            head = create_head_record();
-            
-        }
-        unsigned int code = 1;
+        head = create_head_record();                    //生成链表头                        
+        unsigned int code = 0;                          //初始化种别编码
+        fgets(buf,LINE_SIZE-1,p);
         while(fgets(buf,LINE_SIZE-1,p)!= NULL){         //生成链表内容
             
             head = create_item_record(head, buf,code);
@@ -72,7 +70,7 @@ Rec *create_head_record(){
     if(h != NULL)
     {
         h->type = HEAD;
-        h->next = h;            //头指针的next默认指自己
+        h->next = NULL;            //头指针的next默认空
         h->info.head = malloc(sizeof(Headinfo));
         if(h->info.head != NULL){
             h->info.head->name="单词符号";
@@ -90,15 +88,20 @@ Rec *create_head_record(){
 
 Rec *create_item_record(Rec *head, char *buf, unsigned int num){       //head:链表的头指针; buf:文件的行指针;num:种别编码
     Rec *i = (Rec *)malloc(sizeof(Rec));
-    unsigned int t = 0;                              //种别编码
     if(i != NULL)
     {   
        i->type = BODY;
        i->info.item = malloc(sizeof(Iteminfo));
-       if(i->info.item != NULL)
+       i->info.item->alias = malloc(ALIAS_SIZE*sizeof(char));
+       if((i->info.item != NULL) || (i->info.item->alias != NULL))
        {
-        while((*i->info.item->alias++ = *buf++) != '\0')
-        ;                                           //从buf中拷贝字符串直到/0到item->alias中
+        //while((*(i->info.item->alias)++ = *buf++) != '\0')   ;                                           //从buf中拷贝字符串直到/0到item->alias中
+        char *tmp = i->info.item->alias;
+        while(  *buf!= '|'){
+            *tmp = *buf ;
+            buf = buf + 1;
+            tmp = tmp + 1;
+        }
         i->info.item->type = num;
         i->info.item->address = 0;                  //内码暂定为0
         i->next = head->next;                            //头部插入新结点    ;
@@ -129,22 +132,20 @@ void discard_rec(Rec *rec){                     //删除记录，释放空间
 
 void print_record(Rec *h)
 {
-    Rec *tmp;
-    if(head != NULL)
+    if(h != NULL)
     {
-        switch(h->type)
+        while(h->next != NULL)
         {
-            case HEAD:
-                printf("%s--%s--%s",h->info.head->name,head->info.head->type,head->info.head->address);
-                break;
-            case BODY:
-               tmp = head;
-               while (tmp->next != NULL)
-               {
-                    printf("%s--%c--%c",tmp->info.item->alias,tmp->info.item->type,tmp->info.item->address);
-                    tmp = tmp->next->next;
-               }
-               break;
+            if(h->type == HEAD){
+                printf("%s--%s--%s\n",h->info.head->name,h->info.head->type,h->info.head->address);
+                h = h->next;
+             }else if(h->type == BODY)   {
+                    printf("%s--%d--%d\n",h->info.item->alias,h->info.item->type,h->info.item->address);
+                    h = h->next;
+             }else{
+                   printf("Unkown link type");
+                   exit(1);       
+            }
         }
     }else{
         printf("Record is empty!");
@@ -158,5 +159,5 @@ void print_record(Rec *);
 int main()
 {
     initial_symbol_table();
-    //print_record(head);
+    print_record(head);
 }
