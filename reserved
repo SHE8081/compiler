@@ -1,0 +1,12 @@
+#define ID 0
+#define MAIN 1
+#define INT 2
+#define IF 3
+#define ELSE 4
+#define WHILE 5
+#define DO 6
+#define LESSTHAN 7
+#define MORETHAN 8
+#define NOTEQ 9
+
+

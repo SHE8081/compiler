@@ -14,6 +14,39 @@ static char top_element = -1;
 
 void create_stack(size_t size)
 {
-    
+   assert(size == 0);
+   stack_size = size;
+   stack = malloc (stack_size * sizeof(STACK_TYPE));
+   assert( stack == NULL);
+}
 
+void destory_stack(void)
+{
+    assert(stack_size > 0);
+    stack_size = 0;
+    free(stack);
+    stack = NULL;
+}
+
+void pop(void)
+{
+    assert(!is_empty());
+    top_element = top_element - 1;
+}
+
+STACK_TYPE top(void)
+{
+    assert(!is_empty());
+    return stack[top_elment];
+}
+
+int is_empty(void)
+{
+    return top_element == -1;
+}
+
+
+int is_full(void)
+{
+    return top_element = stack_size - 1;
 }
